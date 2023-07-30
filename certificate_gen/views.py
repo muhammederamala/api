@@ -175,9 +175,10 @@ def form_handle(request):
             # new_certificate_model = form.save(commit=False)
             file_name = name+'.jpg'
             new_certificate_model.certificate_file.save(file_name, image_file, save=True)
+            certificate = new_certificate_model
 
             new_certificate_model.save()
-            return redirect('home_view')
+            return render(request,'certificate_gen/generated.html',{'certificate':certificate})
         else:
             form = certificate_form(request.POST)
             print(form.errors)
@@ -200,7 +201,8 @@ def download_image(request,certificate_number):
         return response
 
 from reportlab.pdfgen import canvas
-from reportlab.platypus import SimpleDocTemplate, Image
+from reportlab.platypus import SimpleDocTemplate
+from reportlab.platypus import Image as plat_iamge
 from reportlab.lib.pagesizes import letter
 from PIL import Image as PILImage
 
@@ -223,9 +225,23 @@ def download_pdf(request,certificate_number):
         # Create a ReportLab document
         doc = SimpleDocTemplate(pdf_buffer, pagesize=letter)
 
+        # Get the image dimensions
+        image_width, image_height = img.size
+
+        # Adjust image size to fit within the PDF page
+        max_width, max_height = letter  # Dimensions of the letter-sized PDF page
+        if image_width > max_width or image_height > max_height:
+            aspect_ratio = image_width / image_height
+            if image_width > max_width:
+                image_width = max_width
+                image_height = int(max_width / aspect_ratio)
+            if image_height > max_height:
+                image_height = max_height
+                image_width = int(max_height * aspect_ratio)
+
         # Convert the image to a PDF page and add it to the document
         pdf_page = []
-        pdf_page.append(Image(image_file.path, width=letter[0], height=letter[1]))
+        pdf_page.append(Image(image_file.path, width=image_width, height=image_height))
         doc.build(pdf_page)
 
         # Set response headers for PDF download

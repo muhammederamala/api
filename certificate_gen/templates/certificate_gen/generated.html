@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div>
+
+    <h1>Certificate Details</h1>
+    <p><strong>Certificate Number:</strong> {{ certificate.certificate_number }}</p>
+    <p><strong>Title:</strong> {{ certificate.title }}</p>
+    <p><strong>Name:</strong> {{ certificate.name }}</p>
+    <p><strong>Subtitle:</strong> {{ certificate.subtitle }}</p>
+    <p><strong>Date:</strong> {{ certificate.date }}</p>
+    <p><strong>Signature:</strong> {{ certificate.signature }}</p>
+
+    {% if certificate.certificate_file %}
+        <img src="{{ certificate.certificate_file.url }}" alt="Certificate Image" height=400>
+    {% else %}
+        <p>No certificate image available.</p>
+    {% endif %}
+    <br>
+    <a href="{% url 'download_image' certificate.certificate_number %}">
+        <button>Download as Image</button>
+    </a>
+    <a href="{% url 'download_pdf' certificate.certificate_number %}">
+        <button>Download as PDF</button>
+    </a>
+</div
+
+{% endblock content %}
