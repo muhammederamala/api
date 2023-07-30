@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect,  get_object_or_404
 import os
 from PIL import Image, ImageDraw, ImageFont
-from django.http import FileResponse, HttpResponse
+from django.http import FileResponse, HttpResponse, HttpResponseServerError
 
 from .models import certificate_model
 from .forms import certificate_form
