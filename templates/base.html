@@ -5,20 +5,21 @@
   {% load static %}
   <link rel="stylesheet" href="{% static 'certificate_gen/mystyle.css' %}">
   <link rel="stylesheet" href="{% static 'certificate_gen/form.css' %}">
+  <link rel="stylesheet" href="{% static 'certificate_gen/verify.css' %}">
 </head>
 <body>
   <nav>
     <ul class="navbar">
       <li><a href="#signin">Sign In</a></li>
       <li class="dropdown">
-        <a href="#products">Products</a>
-        <ul class="dropdown-content">
+        <a href="{% url 'form_view' %}">Generate Certificate</a>
+        {% comment %} <ul class="dropdown-content">
           <li><a href="#product1">Product 1</a></li>
           <li><a href="#product2">Product 2</a></li>
           <!-- Add more product links here -->
-        </ul>
+        </ul> {% endcomment %}
       </li>
-      <li><a href="#verify">Verify</a></li>
+      <li><a href="{% url 'verify_view' %}">Verify</a></li>
     </ul>
   </nav>
 
