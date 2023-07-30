@@ -15,12 +15,17 @@ def form_view(request):
 	print(request.headers)
 	return render(request,'certificate_gen/form.html')
 
+def verify_view(request):
+	print(request.headers)
+	return render(request,'certificate_gen/verify.html',{})
+
+
 def generate_certificate(title, name, subtitle, date, signature, certificate_num):
 
     subtitle_1 = ''
-    if len(subtitle) > 30:
-        subtitle_1 = subtitle[30:]
-        subtitle = subtitle[:30]
+    if len(subtitle) > 60:
+        subtitle_1 = subtitle[60:]
+        subtitle = subtitle[:60]
 
     image_path = os.path.join('static','images', 'certificate.jpg')
 
@@ -75,6 +80,7 @@ def generate_certificate(title, name, subtitle, date, signature, certificate_num
     text_x, text_y, font = field_type(field)
     image_width, image_height = image.size
     text_color = (0, 0, 0)
+    certificate_num = 'certificate no:'+certificate_num
     draw.text((text_x, text_y), certificate_num, font=font, fill=text_color)
 
 
@@ -133,7 +139,7 @@ def field_type(field):
 		return text_x,text_y, font
 
 	elif field =='certificate_num':
-		text_x = 1150
+		text_x = 1000
 		text_y = 900
 		font_path = os.path.join('static','fonts','Find_Cartoon.ttf')
 		font = ImageFont.truetype(font_path, size=20)
@@ -162,7 +168,8 @@ def form_handle(request):
 
             image_io = BytesIO()
             generated_certificate_file.save(image_io, format='JPEG')  # Adjust the format if needed
-            image_file = ContentFile(image_io.getvalue(), name='certificate.jpg')
+            name_of_cer = name
+            image_file = ContentFile(image_io.getvalue(), name=name_of_cer)
 
             # Save the form data to the model
             # new_certificate_model = form.save(commit=False)
@@ -176,3 +183,6 @@ def form_handle(request):
             print(form.errors)
             
     return redirect('form_view')
+
+def verify(request):
+	
