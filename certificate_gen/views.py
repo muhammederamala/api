@@ -15,7 +15,8 @@ def form_view(request):
 	print(request.headers)
 	return render(request,'certificate_gen/form.html')
 
-def generate_certificate(title, name, subtitle, date, signature):
+def generate_certificate(title, name, subtitle, date, signature, certificate_num):
+
     subtitle_1 = ''
     if len(subtitle) > 30:
         subtitle_1 = subtitle[30:]
@@ -51,7 +52,6 @@ def generate_certificate(title, name, subtitle, date, signature):
     if subtitle_1 != '':
         field = 'subtitle_1'
         text_x, text_y, font = field_type(field)
-        text_width, text_height = draw.textsize(subtitle_1, font=font)
         image_width, image_height = image.size
         text_color = (1, 27, 69)
         draw.text((text_x, text_y), subtitle_1, font=font, fill=text_color)
@@ -71,12 +71,11 @@ def generate_certificate(title, name, subtitle, date, signature):
     draw.text((text_x, text_y), signature, font=font, fill=text_color)
 
 
-    # field = 'certificate_num'
-    # text_x, text_y, font = field_type(field)
-    # text_width, text_height = draw.textsize(certificate_num, font=font)
-    # image_width, image_height = image.size
-    # text_color = (0, 0, 0)
-    # draw.text((text_x, text_y), certificate_num, font=font, fill=text_color)
+    field = 'certificate_num'
+    text_x, text_y, font = field_type(field)
+    image_width, image_height = image.size
+    text_color = (0, 0, 0)
+    draw.text((text_x, text_y), certificate_num, font=font, fill=text_color)
 
 
     certificate_folder = os.path.join('static', 'certificates')
@@ -97,7 +96,6 @@ def field_type(field):
 		text_y = 300
 		text_color = (235, 64, 52)
 		return text_x,text_y, font
-
 	
 	elif field == 'name':
 		text_x = 560
@@ -153,7 +151,13 @@ def form_handle(request):
             subtitle = form.cleaned_data['subtitle']
             date = str(form.cleaned_data['date'])
             signature = form.cleaned_data['signature']
-            generated_certificate_file = generate_certificate(title, name, subtitle, date, signature)
+	    
+            new_certificate_model = form.save(commit=False)
+            new_certificate_model.save()
+            certificate_num = new_certificate_model.certificate_number
+            certificate_num = str(certificate_num)
+
+            generated_certificate_file = generate_certificate(title, name, subtitle, date, signature,certificate_num)
             # certificate_file = form.cleaned_data['certificate_file']
 
             image_io = BytesIO()
@@ -161,7 +165,7 @@ def form_handle(request):
             image_file = ContentFile(image_io.getvalue(), name='certificate.jpg')
 
             # Save the form data to the model
-            new_certificate_model = form.save(commit=False)
+            # new_certificate_model = form.save(commit=False)
             file_name = name+'.jpg'
             new_certificate_model.certificate_file.save(file_name, image_file, save=True)
 
