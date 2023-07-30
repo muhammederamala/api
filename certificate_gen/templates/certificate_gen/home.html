@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container_1">
+	<h1>Online Certificate Maker</h1>
+	<p>Generate beautiful certificates for your students or colleagues and download in PDF format</p>
+	<a href="{% url 'form_view' %}">
+	<button class="home_gen_button">Create a Certificate now !</button>
+	</a>
+	<p id="welcome_text">100% Free — Download in PDF or JPG</p>
+</div>
+
+{% endblock content %}
