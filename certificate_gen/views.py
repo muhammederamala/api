@@ -16,13 +16,10 @@ def form_view(request):
 	return render(request,'certificate_gen/form.html')
 
 def generate_certificate(title, name, subtitle, date, signature):
-    # title = 'Participation'
-    # name = 'John Jacob'
-    # subtitle = 'for attending the webinar on Machine Learning and Data Science' 
-    # subtitle_1 ='conducted by IEEE on october 13th 2020'
-    # date = '06-01-2023'
-    # signature = 'signature'
-    # certificate_num = 'AB00023'
+    subtitle_1 = ''
+    if len(subtitle) > 30:
+        subtitle_1 = subtitle[30:]
+        subtitle = subtitle[:30]
 
     image_path = os.path.join('static','images', 'certificate.jpg')
 
@@ -51,12 +48,13 @@ def generate_certificate(title, name, subtitle, date, signature):
     text_color = (1, 27, 69)
     draw.text((text_x, text_y), subtitle, font=font, fill=text_color)
 
-    # field = 'subtitle_1'
-    # text_x, text_y, font = field_type(field)
-    # text_width, text_height = draw.textsize(subtitle_1, font=font)
-    # image_width, image_height = image.size
-    # text_color = (1, 27, 69)
-    # draw.text((text_x, text_y), subtitle_1, font=font, fill=text_color)
+    if subtitle_1 != '':
+        field = 'subtitle_1'
+        text_x, text_y, font = field_type(field)
+        text_width, text_height = draw.textsize(subtitle_1, font=font)
+        image_width, image_height = image.size
+        text_color = (1, 27, 69)
+        draw.text((text_x, text_y), subtitle_1, font=font, fill=text_color)
 
 
     field = 'date'
