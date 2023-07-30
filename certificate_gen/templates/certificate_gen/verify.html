@@ -4,9 +4,12 @@
 {% block content %}
 
 <div class="verify_container">
-    <input type="text" class="input-field" placeholder="Enter your certificate ID">
+    <form method='POST' action = "{% url 'verify_cer' %}">
+        {% csrf_token %}
+    <input type="text" class="input-field" placeholder="Enter your certificate ID" name='certificate_id' >
     <br>
-    <button class="verify-btn">Verify</button>
+    <button class="verify-btn" type='submit' >Verify</button>
+    </form>
 </div>
 
 {% endblock content %}

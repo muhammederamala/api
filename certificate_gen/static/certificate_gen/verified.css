@@ -1,0 +1,35 @@
+/* Add your custom styles here */
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    color: #23527c;
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+h2 {
+    color: #23527c;
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+p {
+    margin: 5px 0;
+}
+
+strong {
+    font-weight: bold;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin-top: 20px;
+}

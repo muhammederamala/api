@@ -1,7 +1,7 @@
-from django.shortcuts import render
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,  get_object_or_404
 import os
 from PIL import Image, ImageDraw, ImageFont
+from django.http import FileResponse, HttpResponse
 
 from .models import certificate_model
 from .forms import certificate_form
@@ -184,5 +184,57 @@ def form_handle(request):
             
     return redirect('form_view')
 
-def verify(request):
-	
+def verify_cer(request):
+	if request.method == 'POST':
+		certificate_id = request.POST.get('certificate_id')
+		certificate = get_object_or_404(certificate_model,certificate_number=certificate_id)
+	else:
+		return render('home_view')
+	return render(request,'certificate_gen/verified.html',{'certificate':certificate})
+
+def download_image(request,certificate_number):
+    certificate = get_object_or_404(certificate_model, certificate_number=certificate_number)
+
+    if certificate.certificate_file:
+        response = FileResponse(certificate.certificate_file, as_attachment=True)
+        return response
+
+from reportlab.pdfgen import canvas
+from reportlab.platypus import SimpleDocTemplate, Image
+from reportlab.lib.pagesizes import letter
+from PIL import Image as PILImage
+
+def download_pdf(request,certificate_number):
+    certificate = get_object_or_404(certificate_model,certificate_number = certificate_number)
+    image_file = certificate.certificate_file
+    
+    try:
+        with PILImage.open(image_file.path) as img:
+            image_format = img.format
+
+        # Ensure the image is in a format supported by ReportLab (e.g., JPEG or PNG)
+        supported_image_formats = ['JPEG', 'PNG']
+        if image_format not in supported_image_formats:
+            return HttpResponse("Image format not supported for PDF conversion.", status=400)
+
+        # Create a PDF buffer
+        pdf_buffer = BytesIO()
+
+        # Create a ReportLab document
+        doc = SimpleDocTemplate(pdf_buffer, pagesize=letter)
+
+        # Convert the image to a PDF page and add it to the document
+        pdf_page = []
+        pdf_page.append(Image(image_file.path, width=letter[0], height=letter[1]))
+        doc.build(pdf_page)
+
+        # Set response headers for PDF download
+        response = FileResponse(pdf_buffer, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="image_to_pdf.pdf"'
+
+        return response
+
+    except Exception as e:
+        # Log the error for debugging purposes
+        print(f"Error generating PDF: {e}")
+        return HttpResponseServerError("Failed to generate the PDF.")
